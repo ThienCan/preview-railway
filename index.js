@@ -4,6 +4,8 @@ const PORT = process.env.PORT || 3000;
 const ENVIRONMENT = process.env.RAILWAY_ENVIRONMENT_NAME || "local";
 
 const server = http.createServer((req, res) => {
+  console.log(`Received request: ${req.method} ${req.url}`);
+
   if (req.url === "/health") {
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ status: "ok" }));
