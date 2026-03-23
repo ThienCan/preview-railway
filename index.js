@@ -5,6 +5,7 @@ const ENVIRONMENT = process.env.RAILWAY_ENVIRONMENT_NAME || "local";
 
 const server = http.createServer((req, res) => {
   console.log(`Received request: ${req.method} ${req.url}`);
+  console.log(`Request headers: ${JSON.stringify(req.headers)}`);
 
   if (req.url === "/health") {
     res.writeHead(200, { "Content-Type": "application/json" });
