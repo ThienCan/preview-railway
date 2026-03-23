@@ -1,8 +1,8 @@
-name: Preview Deploy
+name: Deploy PR Environment
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize]
 
 jobs:
   build:
@@ -20,13 +20,15 @@ jobs:
     name: Deploy PR Environment
     needs: build
     runs-on: ubuntu-latest
-    environment: preview
+    environment:
+      name: pr-${{ github.event.pull_request.number }}
     steps:
-      - name: Create PR environment
-        uses: Faolain/railway-pr-deploy@v2.0.4
+      - uses: actions/checkout@v4
         with:
-          RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
-          SRC_ENVIRONMENT_NAME: development
-          DEST_ENV_NAME: pr-${{ github.event.pull_request.number }}
-          branch_name: ${{ github.head_ref }}
+          ref: ${{ github.head_ref }}
+      - name: Deploy to Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          npm install -g @railway/cli
+          railway up --service preview-railway
